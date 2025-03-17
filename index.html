@@ -10,25 +10,34 @@
 <body>
     <form id="main">
         <h3>QUIZ</h3>
-        <input type="text" id="name" placeholder="name">
+        <input type="text" id="name" placeholder="Unesite Ime">
         <label for="">Izaberite kategoriju</label>
         <select name="kategoriju" id="kategoriju">
-            <option value="Geografija">Geografija</option>
-            <option value="Matematika">Matematika</option>
+            <option value="" disabled selected>Odaberi kategoriju</option>
+            <option value="Geography">Geography</option>
+            <option value="Science">Science</option>
             <option value="Sport">Sport</option>
         </select>
         <label for="">Izaberite tezinu</label>
         <select name="difficulties" id="difficulties">
+            <option value="" disabled selected>Odaberi tezinu</option>
             <option >Easy</option>
-            <option>Normal</option>
+            <option>Medium</option>
             <option >Hard</option>
         </select>
         <button id="btn">Pocetak</button>
     </form>
 
-    <div id="quiz-container">
+    <div id="quizContainer">
         <h2 id="question">Pitanje će biti ovdje</h2>
-        
+        <div class="answers">
+            <button id="answer1">Prvo</button>
+            <button id="answer2">Drugo</button>
+        </div>
+        <div class="answers">
+            <button id="answer3">Trece</button>
+            <button id="answer4">Cetvrto</bu;tton>
+        </div>
         <button id="next">Sljedeće</button>
     </div>
 
