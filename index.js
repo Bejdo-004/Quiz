@@ -51,6 +51,18 @@ document.querySelector("#btn").addEventListener("click", async (event) => {
     prikaziPitanje(data);
   } catch (error) {
     console.error("Greška pri dohvaćanju podataka", error);
+    alert("Greska na serveru. Samo lagano, ubrzo cete biti vraceni na pocetnu stranicu")
+    
+    const timer = setInterval(() => {
+      countdownText.textContent = countdown;
+      countdown--;
+
+      if (countdown < 0) {
+        clearInterval(timer);
+        location.reload();
+      }
+    }, 100);
+    
   }
 });
 function prikaziPitanje(data) {
