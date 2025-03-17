@@ -1,58 +1,86 @@
 const difficulties = document.querySelector("#difficulties");
 const category = document.querySelector("#kategoriju");
-const namee = document.querySelector("#name")
-const form = document.querySelector("form")
-const quizContainer = document.querySelector("#quizContainer")
-const question = document.querySelector("#question")
-let correctAnswers = 0
-let currentQuestions = [];
+const namee = document.querySelector("#name");
+const form = document.querySelector("form");
+const quizContainer = document.querySelector("#quizContainer");
+const question = document.querySelector("#question");
+
+let correctAnswers = 0;
 let currentIndex = 0;
 
+const answerButtons = [
+    document.querySelector("#answer1"),
+    document.querySelector("#answer2"),
+    document.querySelector("#answer3"),
+    document.querySelector("#answer4")
+];
 
-document.querySelector("#btn").addEventListener("click", (event) => {
-   event.preventDefault();
-   console.log("Odabrana težina:", difficulties.value);
-   console.log("Odabrana kategorija:", category.value);
-   console.log("Ime igraca:", namee.value);
+document.querySelector("#btn").addEventListener("click", async (event) => {
+    event.preventDefault();
+    
+    console.log("Odabrana težina:", difficulties.value);
+    console.log("Odabrana kategorija:", category.value);
+    console.log("Ime igrača:", namee.value);
 
-   form.style.display = "none"
-   quizContainer.style.display = "block";
-   let categoryDifficultie = category.value.toLowerCase() + "_" + difficulties.value
-   console.log(categoryDifficultie);
+    form.style.display = "none";
+    quizContainer.style.display = "block";
 
+    let kategorija = category.value.toLowerCase();
+    let nivo = difficulties.value.toLowerCase();
+    
+    try {
+        let response = await fetch(`https://the-trivia-api.com/v2/questions?limit=5&difficulties=${nivo}&categories=${kategorija}`);
+        let data = await response.json();
+        console.log("Podaci uspješno dohvaćeni:", data);
 
-
-   let fetchingData = async (category, difficulties) => {
-      let kategorija = category.value.toLowerCase()
-      let nivo = difficulties.value.toLowerCase()
-      try {
-         let response = await fetch(`https://the-trivia-api.com/v2/questions?limit=5&difficulties=${nivo}&categories=${kategorija}`)
-         let data = await response.json()
-         console.log("USPIOOOOOO", data);
-      
-         question.textContent = data[currentIndex].question.text
-
-         let correctAnswer = data[currentIndex].correctAnswer
-         let wrongAnswers = data[currentIndex].incorrectAnswers
-         console.log("wrooooooooooong", wrongAnswers);
-         let currentAnswers = wrongAnswers
-         currentAnswers.push(correctAnswer)
-         console.log(currentAnswers);
-         /////izmjesatii cuurentAnswers onda kroz for petlju svakom buttonu dodati jedani answer kada klikne na button provjeriti da li se slaze sa correctAnswerom ako da  onda ga pozeleniti i dodati na correctAnswers++ 
-         // zatim na klik naporaviti za sledece pitanje  kada se sve zavrsi ispisati ime ispisati broj pogodenih, onda dodati tajmer i urediti css
-         
-      }
-      catch (error) {
-         console.error("Gresla", error);
-      }
-
-   }
-   fetchingData(category,difficulties)
+        prikaziPitanje(data);
+    } catch (error) {
+        console.error("Greška pri dohvaćanju podataka", error);
+    }
 });
 
+function prikaziPitanje(data) {
+    if (currentIndex >= data.length) {////////////////////////////////////////////////////////////////////
+        alert(`Kviz završen! Tačni odgovori: ${correctAnswers}/${data.length}`);
+        location.reload();
+        return;
+    }
 
+    let pitanje = data[currentIndex];
+    question.textContent = pitanje.question.text;
 
+    let correctAnswer = pitanje.correctAnswer;
+    let answers = [...pitanje.incorrectAnswers, correctAnswer]; 
+    answers = shuffleArray(answers);
 
+    answerButtons.forEach((button, index) => {
+        button.textContent = answers[index];
+        button.style.backgroundColor = ""; 
+        button.onclick = () => provjeriOdgovor(button, correctAnswer, data);
+    });
+}
+
+function provjeriOdgovor(button, correctAnswer, data) {
+    if (button.textContent === correctAnswer) {
+        button.style.backgroundColor = "green";
+        correctAnswers++;
+    } else {
+        button.style.backgroundColor = "red";
+    }
+
+    setTimeout(() => {
+        currentIndex++;
+        prikaziPitanje(data);
+    }, 1000);
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 
 

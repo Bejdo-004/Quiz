@@ -64,5 +64,12 @@ button:hover {
 }
 .answers{
     display: flex;
+    justify-content: space-around;
     
+}
+.answers button{
+    width: 45%;
+}
+h2{
+    margin: 30px;
 }
