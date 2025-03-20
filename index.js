@@ -5,15 +5,14 @@ const form = document.querySelector("form");
 const quizContainer = document.querySelector("#quizContainer");
 const question = document.querySelector("#question");
 const end = document.querySelector("#end");
-const endName = document.querySelector("#ime");
 const brojPogodenihOdgovora = document.querySelector("span");
-let countdown = 10;
 const countdownText = document.querySelector("#countdown");
-let easyCountdown = 15;
-let mediumCountdown = 10;
-let hardCountdown = 7;
 const answerTime = document.querySelector("#answerTime");
-
+const endName = document.querySelector("h4")
+let easyCountdown = 20;
+let mediumCountdown = 15;
+let hardCountdown = 12;
+let countdown = 10;
 let correctAnswers = 0;
 let currentIndex = 0;
 
@@ -31,9 +30,7 @@ document.querySelector("#btn").addEventListener("click", async (event) => {
     return;
   }
 
-  console.log("Odabrana težina:", difficulties.value);
-  console.log("Odabrana kategorija:", category.value);
-  console.log("Ime igrača:", namee.value);
+ 
 
   form.style.display = "none";
 
@@ -45,7 +42,6 @@ document.querySelector("#btn").addEventListener("click", async (event) => {
       `https://the-trivia-api.com/v2/questions?limit=5&difficulties=${nivo}&categories=${kategorija}`
     );
     let data = await response.json();
-    console.log("Podaci uspješno dohvaćeni:", data);
 
     quizContainer.style.display = "block";
     prikaziPitanje(data);
@@ -69,6 +65,8 @@ function prikaziPitanje(data) {
   if (currentIndex >= data.length) {
     quizContainer.style.display = "none";
     end.style.display = "block";
+    endName.style.fontSize = "25px"
+    endName.textContent = namee.value
     brojPogodenihOdgovora.textContent = `${correctAnswers}/${data.length}`;
 
     const timer = setInterval(() => {
@@ -92,7 +90,7 @@ function prikaziPitanje(data) {
   answers = shuffleArray(answers);
 
   let nivo = difficulties.value.toLowerCase();
-  let timeLeft = nivo === "easy" ? 15 : nivo === "medium" ? 10 : 7;
+  let timeLeft = nivo === "easy" ? easyCountdown : nivo === "medium" ? mediumCountdown : hardCountdown;
 
   answerTime.textContent = timeLeft;
 
@@ -129,8 +127,10 @@ function provjeriOdgovor(button, correctAnswer, data) {
   if (button.textContent === correctAnswer) {
     button.style.backgroundColor = "green";
     correctAnswers++;
+    answerButtons.forEach(btn => btn.disabled = true )
   } else {
     button.style.backgroundColor = "red";
+    answerButtons.forEach(btn => btn.disabled = true )
   }
   answerButtons.forEach((btn) => {
     if (btn.textContent === correctAnswer) {
@@ -139,6 +139,7 @@ function provjeriOdgovor(button, correctAnswer, data) {
   });
 
   setTimeout(() => {
+    answerButtons.forEach(btn => btn.disabled = false )
     currentIndex++;
     prikaziPitanje(data);
   }, 1000);
